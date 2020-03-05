@@ -6,13 +6,13 @@ RUN apk add --update \
 
 RUN wget -O /usr/local/bin/dep https://github.com/golang/dep/releases/download/v0.5.0/dep-linux-amd64 && chmod +x /usr/local/bin/dep
 
-WORKDIR /go/src/github.com/kgretzky/evilginx2
+WORKDIR /go/src/github.com/hash3liZer/evilginx2
 
 COPY Gopkg.toml Gopkg.lock ./
 
 RUN dep ensure -vendor-only
 
-COPY . /go/src/github.com/kgretzky/evilginx2
+COPY . /go/src/github.com/hash3liZer/evilginx2
 
 RUN go build -o ./bin/evilginx main.go
 
@@ -24,7 +24,7 @@ RUN apk add --update \
 
 WORKDIR /app
 
-COPY --from=build /go/src/github.com/kgretzky/evilginx2/bin/evilginx /app/evilginx
+COPY --from=build /go/src/github.com/hash3liZer/evilginx2/bin/evilginx /app/evilginx
 COPY ./phishlets/*.yaml /app/phishlets/
 
 VOLUME ["/app/phishlets/"]
