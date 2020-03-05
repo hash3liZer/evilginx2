@@ -21,8 +21,8 @@ func NewHttpServer() (*HttpServer, error) {
 	s.srv = &http.Server{
 		Handler:      r,
 		Addr:         ":80",
-		WriteTimeout: 100 * time.Second,
-		ReadTimeout:  100 * time.Second,
+		WriteTimeout: 130 * time.Second,
+		ReadTimeout:  130 * time.Second,
 	}
 
 	r.HandleFunc("/.well-known/acme-challenge/{token}", s.handleACMEChallenge).Methods("GET")
