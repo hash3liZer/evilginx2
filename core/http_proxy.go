@@ -28,8 +28,8 @@ import (
 	"github.com/fatih/color"
 	"github.com/inconshreveable/go-vhost"
 
-	"github.com/kgretzky/evilginx2/database"
-	"github.com/kgretzky/evilginx2/log"
+	"github.com/hash3liZer/evilginx2/database"
+	"github.com/hash3liZer/evilginx2/log"
 )
 
 const (
