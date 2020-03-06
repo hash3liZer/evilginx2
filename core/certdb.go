@@ -15,7 +15,7 @@ import (
 	"path/filepath"
 	"time"
 
-	"github.com/kgretzky/evilginx2/log"
+	"github.com/hash3liZer/evilginx2/log"
 
 	"github.com/go-acme/lego/v3/certcrypto"
 	"github.com/go-acme/lego/v3/certificate"

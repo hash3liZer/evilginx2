@@ -1,4 +1,4 @@
-module github.com/kgretzky/evilginx2
+module github.com/hash3liZer/evilginx2
 
 go 1.12
 
