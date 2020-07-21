@@ -64,69 +64,47 @@ Evilginx runs very well on the most basic Debian 8 VPS.
 
 #### Installing from source
 
-In order to compile from source, make sure you have installed **GO** of version at least **1.10.0** (get it from [here](https://golang.org/doc/install)) and that `$GOPATH` environment variable is set up properly (def. `$HOME/go`).
+In order to compile from source, make sure you have installed **GO** of version **1.13.0** and that `$GOPATH` environment variable is set up properly (def. `$HOME/go`).
 
-After installation, add this to your `~/.profile`, assuming that you installed **GO** in `/usr/local/go`:
-
+Update Repos and install pre-requisities: 
 ```
-export GOPATH=$HOME/go
-export PATH=$PATH:/usr/local/go/bin:$GOPATH/bin
-```
-Then load it with `source ~/.profiles`.
-
-Now you should be ready to install **evilginx2**. Follow these instructions:
-
-```
-sudo apt-get install git make
-go get -u github.com/kgretzky/evilginx2
-cd $GOPATH/src/github.com/kgretzky/evilginx2
-make
+$ apt update
+$ apt install make wget git
 ```
 
-You can now either run **evilginx2** from local directory like:
+Download go version **1.13.0**
 ```
-sudo ./bin/evilginx -p ./phishlets/
+$ wget https://dl.google.com/go/go1.13.linux-amd64.tar.gi
 ```
-or install it globally:
+Place the binaries in a desired directory: 
 ```
-sudo make install
-sudo evilginx
+$ tar -C /usr/local -xzf go1.13.linux-amd64.tar.gz
 ```
-
-Instructions above can also be used to update **evilginx2** to the latest version.
-
-#### Installing with Docker
-
-You can launch **evilginx2** from within Docker. First build the container:
+Put GO in PATH:
 ```
-docker build . -t evilginx2
+$ export GOPATH=$HOME/go
+$ export PATH=$PATH:/usr/local/go/bin:$GOPATH/bin
 ```
-
-Then you can run the container:
+Clone evilginx2:
 ```
-docker run -it -p 53:53/udp -p 80:80 -p 443:443 evilginx2
+$ go get -u github.com/hash3liZer/evilginx2
+$ cd $GOPATH/src/github.com/hash3liZer/evilginx2
 ```
-
-Phishlets are loaded within the container at `/app/phishlets`, which can be mounted as a volume for configuration.
-
-#### Installing from precompiled binary packages
-
-Grab the package you want from [here](https://github.com/kgretzky/evilginx2/releases) and drop it on your box. Then do:
+Compilation:
 ```
-unzip <package_name>.zip -d <package_name>
-cd <package_name>
+$ make
+$ go build main.go
+$ chmod 755 main
 ```
 
-If you want to do a system-wide install, use the install script with root privileges:
+Optionally, you can create a link to evilginx2, for placing it in PATH: 
 ```
-chmod 700 ./install.sh
-sudo ./install.sh
-sudo evilginx
+$ ln -s /root/go/src/github.com/hash3liZer/evilginx2/main /usr/bin/evilginx2
 ```
-or just launch **evilginx2** from the current directory (you will also need root privileges):
+
+Execute evilginx2:
 ```
-chmod 700 ./evilginx
-sudo ./evilginx
+$ evilginx2
 ```
 
 ## Usage
