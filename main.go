@@ -29,16 +29,15 @@ func joinPath(base_path string, rel_path string) string {
 }
 
 func main() {
+	flag.Parse()
 	Start(false, *phishlets_dir, *debug_log, *developer_mode, *cfg_dir)
 }
 
 func Start(run_background bool, phishlets_path string, debug bool, dev bool, config_path string) *core.Terminal {
 	exe_path, _ := os.Executable()
 	exe_dir := filepath.Dir(exe_path)
-	log.Info("phishlets: %v %v", phishlets_path, debug)
 
 	core.Banner()
-	flag.Parse()
 	if phishlets_path == "" {
 		phishlets_path = joinPath(exe_dir, "./phishlets")
 		if _, err := os.Stat(phishlets_path); os.IsNotExist(err) {
@@ -140,10 +139,6 @@ func Start(run_background bool, phishlets_path string, debug bool, dev bool, con
 		return nil
 	}
 
-	if run_background {
-		go t.DoWork()
-	} else {
-		t.DoWork()
-	}
+	t.DoWork(run_background)
 	return t
 }
