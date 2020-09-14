@@ -53,7 +53,7 @@ func Start(run_background bool, phishlets_path string, debug bool, dev bool, con
 		return nil
 	}
 	log.Info("loading phishlets from: %s", phishlets_path)
-	
+
 	log.DebugEnable(debug)
 	if debug {
 		log.Info("debug output enabled")
