@@ -6,14 +6,14 @@
 </p>
 
 ## NOTE
-This repo is fork of the [Evilginx](https://github.com/kgretzky/evilginx) and currently solve the following issues with the orignal version. 
-1. Timeout Problem Fixed! Evilginx2 timeout the requests if the websites take longer to respond and in result the users see a blank page. Now, default timeout is 60 seconds which was 15 seconds before. 
-2. `CORS` header problem fixed. Will set `Access-Control-Allow-Origin` for every proxied uri.
-3. Fixed hostname port bug. Refer here for more in the issue: [https://github.com/kgretzky/evilginx2/issues/118](https://github.com/kgretzky/evilginx2/issues/118)
-4. Removed some Unwanted headers. Causing Denail of Requests. 
-5. Fixed Okta Phishlet!
-6. Fixed Build Errors and removed dependency issues with the tool. 
-7. Fixed ACME error. 
+This repo is maintained fork of the [Evilginx2](https://github.com/kgretzky/evilginx2) repository and currently solves most raised issues, like 
+1. Evilginx2 timeout the requests if the websites take longer to respond and in result the users see a blank page. Now, default timeout is 60 seconds which was 15 seconds before. 
+2. `CORS` header problem fixed. Will set `Access-Control-Allow-Origin` for every proxied url
+3. Fixed hostname port bug
+4. Removed some unwanted headers, causing daniel of requests 
+5. Fixed Okta Phishlet
+6. Fixed build errors and removed dependency issues with the tool
+7. Fixed ACME error
 
 **evilginx2** is a man-in-the-middle attack framework used for phishing login credentials along with session cookies, which in turn allows to bypass 2-factor authentication protection.
 
@@ -56,7 +56,7 @@ Please thank the following contributors for devoting their precious time to deli
 
 ## Installation
 
-You can either use a [precompiled binary package](https://github.com/kgretzky/evilginx2/releases) for your architecture or you can compile **evilginx2** from source.
+You can either use a [precompiled binary package](https://github.com/hash3liZer/evilginx2/releases) for your architecture, use a [Docker container](https://hub.docker.com/r/heywoodlh/evilginx2) or you can compile **evilginx2** from source.
 
 You will need an external server where you'll host your **evilginx2** installation. I personally recommend Digital Ocean and if you follow my referral link, you will [get an extra $10 to spend on servers for free](https://m.do.co/c/50338abc7ffe).
 
@@ -64,45 +64,22 @@ Evilginx runs very well on the most basic Debian 8 VPS.
 
 #### Installing from source
 
-In order to compile from source, make sure you have installed **GO** of version **1.13.0** and that `$GOPATH` environment variable is set up properly (def. `$HOME/go`).
+In order to compile from source, make sure you have installed the most recent version of **GO** and that `$GOPATH` environment variable is set up properly (def. `$HOME/go`).
 
-Update Repos and install pre-requisities: 
-```
-$ apt update
-$ apt install make wget git
-```
+Follow [this guide](https://golang.org/doc/install) to install and configure Go.
 
-Download go version **1.13.0**
+Clone the repository and switch into the newly created directory:
 ```
-$ wget https://dl.google.com/go/go1.13.linux-amd64.tar.gi
-```
-Place the binaries in a desired directory: 
-```
-$ tar -C /usr/local -xzf go1.13.linux-amd64.tar.gz
-```
-Put GO in PATH:
-```
-$ export GOPATH=$HOME/go
-$ export PATH=$PATH:/usr/local/go/bin:$GOPATH/bin
-```
-Clone evilginx2:
-```
-$ go get -u github.com/hash3liZer/evilginx2
-$ cd $GOPATH/src/github.com/hash3liZer/evilginx2
-```
-Compilation:
-```
-$ make
-$ go build main.go
-$ chmod 755 main
+$ git clone https://github.com/hash3liZer/evilginx2.git
+$ cd evilginx2
 ```
 
-Optionally, you can create a link to evilginx2, for placing it in PATH: 
+Build the executable by simply triggering the build pipeline:
 ```
-$ ln -s /root/go/src/github.com/hash3liZer/evilginx2/main /usr/bin/evilginx2
+$ go build
 ```
 
-Execute evilginx2:
+You should now have an executable and can simply execute it:
 ```
 $ evilginx2
 ```
@@ -121,6 +98,8 @@ Usage of ./evilginx:
         Enable developer mode (generates self-signed certificates for all hostnames)
   -p string
         Phishlets directory path
+  -c string
+        Configuration directory path
 ```
 
 You should see **evilginx2** logo with a prompt to enter commands. Type `help` or `help <command>` if you want to see available commands or more detailed information on them.

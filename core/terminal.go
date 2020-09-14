@@ -24,6 +24,7 @@ const (
 
 type Terminal struct {
 	rl        *readline.Instance
+	rlc       *readline.Config
 	completer *readline.PrefixCompleter
 	cfg       *Config
 	crt_db    *CertDb
@@ -43,23 +44,15 @@ func NewTerminal(cfg *Config, crt_db *CertDb, db *database.Database, developer b
 
 	t.createHelp()
 	t.completer = t.hlp.GetPrefixCompleter(LAYER_TOP)
-	/*
-		t.completer = readline.NewPrefixCompleter(
-			readline.PcItem("server"),
-			readline.PcItem("ip"),
-			readline.PcItem("status"),
-			readline.PcItem("phishlet", readline.PcItem("show"), readline.PcItem("enable"), readline.PcItem("disable"), readline.PcItem("hostname"), readline.PcItem("url")),
-			readline.PcItem("sessions", readline.PcItem("delete", readline.PcItem("all"))),
-			readline.PcItem("exit"),
-		)
-	*/
-	t.rl, err = readline.NewEx(&readline.Config{
+
+	t.rlc = &readline.Config{
 		Prompt:              DEFAULT_PROMPT,
 		AutoComplete:        t.completer,
 		InterruptPrompt:     "^C",
 		EOFPrompt:           "exit",
 		FuncFilterInputRune: t.filterInput,
-	})
+	}
+	t.rl, err = readline.NewEx(t.rlc)
 	if err != nil {
 		return nil, err
 	}
@@ -73,6 +66,10 @@ func (t *Terminal) Close() {
 func (t *Terminal) output(s string, args ...interface{}) {
 	out := fmt.Sprintf(s, args...)
 	fmt.Fprintf(color.Output, "\n%s\n", out)
+}
+
+func (t *Terminal) GetConfig() *readline.Config {
+	return t.rlc
 }
 
 func (t *Terminal) DoWork() {
