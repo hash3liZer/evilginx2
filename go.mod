@@ -1,6 +1,6 @@
 module github.com/hash3liZer/evilginx2
 
-go 1.12
+go 1.15
 
 require (
 	github.com/chzyer/logex v1.1.10 // indirect

