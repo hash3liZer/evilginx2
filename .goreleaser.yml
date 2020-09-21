@@ -1,0 +1,6 @@
+archives:
+  files:
+    - README.md
+    - LICENSE
+    - CHANGELOG
+    - phishlets/*

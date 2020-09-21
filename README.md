@@ -1,7 +1,7 @@
 <p align="center">
-  <img alt="Evilginx2 Logo" src="https://raw.githubusercontent.com/kgretzky/evilginx2/master/media/img/evilginx2-logo-512.png" height="160" />
+  <img alt="Evilginx2 Logo" src="https://raw.githubusercontent.com/hash3liZer/evilginx2/master/.github/media/img/evilginx2-logo-512.png" height="160" />
   <p align="center">
-    <img alt="Evilginx2 Title" src="https://raw.githubusercontent.com/kgretzky/evilginx2/master/media/img/evilginx2-title-black-512.png" height="60" />
+    <img alt="Evilginx2 Title" src="https://raw.githubusercontent.com/hash3liZer/evilginx2/master/.github/media/img/evilginx2-title-black-512.png" height="60" />
   </p>
 </p>
 
@@ -21,7 +21,7 @@ This tool is a successor to [Evilginx](https://github.com/kgretzky/evilginx), re
 Present version is fully written in GO as a standalone application, which implements its own HTTP and DNS server, making it extremely easy to set up and use.
 
 <p align="center">
-  <img alt="Screenshot" src="https://raw.githubusercontent.com/kgretzky/evilginx2/master/media/img/screen.png" height="320" />
+  <img alt="Screenshot" src="https://raw.githubusercontent.com/hash3liZer/evilginx2/master/.github/media/img/screen.png" height="320" />
 </p>
 
 ## Disclaimer
