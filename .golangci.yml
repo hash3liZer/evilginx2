@@ -7,7 +7,7 @@ issues:
     - path: db_session\.go
       linters:
         - staticcheck
-      text: "Use Transactions"
+      text: "CreateIndex is deprecated"
 
 linters-settings:
   nolintlint:

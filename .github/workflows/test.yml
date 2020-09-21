@@ -9,7 +9,7 @@ jobs:
     - name: Checkout code
       uses: actions/checkout@v2
     - name: E2E Test
-      run: go test
+      run: sudo go test
       env:
         REDDITPASSWORD: ${{ secrets.REDDITPASSWORD }}
   golangci:
