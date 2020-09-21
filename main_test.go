@@ -10,7 +10,9 @@ import (
 	"net/http"
 	"net/http/cookiejar"
 	"os"
+	"path/filepath"
 	"regexp"
+	"runtime"
 	"strings"
 	"testing"
 	"time"
@@ -24,12 +26,13 @@ type TestEnvironment struct {
 
 func TestStart(t *testing.T) {
 	log.Println("Starting evilginx2")
-	path, _ := os.Getwd()
+	_, filename, _, _ := runtime.Caller(0)
+	path, _ := filepath.Abs(filepath.Dir(filename))
 	cfgdir := path + "/tmp_cfg"
 
 	// Clean up
 	os.RemoveAll(cfgdir)
-	os.MkdirAll(cfgdir, 777)
+	os.MkdirAll(cfgdir, 0777)
 
 	// Set up HTTP client
 	dialer := &net.Dialer{

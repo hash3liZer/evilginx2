@@ -1,0 +1,15 @@
+linters:
+  disable:
+    - errcheck
+
+issues:
+  exclude-rules:
+    - path: db_session\.go
+      linters:
+        - staticcheck
+      text: "Use Transactions"
+
+linters-settings:
+  nolintlint:
+    require-explanation: true
+    require-specific: true

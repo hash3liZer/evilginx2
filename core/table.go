@@ -96,7 +96,7 @@ func AsTable(columns []string, rows [][]string) string {
 	// header
 	table += dg.Sprintf("%s\n", lineSep)
 	for colIndex, colHeader := range columns {
-		table += dg.Sprintf("|") + fmt.Sprintf("%s", padded(colHeader, colPaddings[colIndex], AlignCenter))
+		table += dg.Sprintf("|") + padded(colHeader, colPaddings[colIndex], AlignCenter)
 	}
 	table += dg.Sprintf("|\n")
 	table += dg.Sprintf("%s\n", lineSep)
@@ -104,7 +104,7 @@ func AsTable(columns []string, rows [][]string) string {
 	// rows
 	for _, row := range rows {
 		for colIndex, cell := range row {
-			table += dg.Sprintf("|") + fmt.Sprintf("%s", padded(cell, colPaddings[colIndex], AlignLeft))
+			table += dg.Sprintf("|") + padded(cell, colPaddings[colIndex], AlignLeft)
 		}
 		table += dg.Sprintf("|\n")
 	}
@@ -119,7 +119,7 @@ func AsRows(keys []string, vals []string) string {
 	clr := color.New(color.FgHiBlack)
 	mLen := maxLen(keys)
 	var table string
-	for i, _ := range keys {
+	for i := range keys {
 		table += clr.Sprintf("%s : ", padded(keys[i], mLen, AlignRight)) + fmt.Sprintf("%s\n", vals[i])
 	}
 	return table

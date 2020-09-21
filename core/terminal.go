@@ -651,7 +651,7 @@ func (t *Terminal) handleLures(args []string) error {
 				}
 				if args[1] == "all" {
 					di := []int{}
-					for n, _ := range t.cfg.lures {
+					for n := range t.cfg.lures {
 						di = append(di, n)
 					}
 					if len(di) > 0 {
@@ -864,7 +864,7 @@ func (t *Terminal) sprintPhishletStatus(site string) string {
 	n := 0
 	cols := []string{"phishlet", "author", "active", "status", "hostname"}
 	var rows [][]string
-	for s, _ := range t.cfg.phishlets {
+	for s := range t.cfg.phishlets {
 		if site == "" || s == site {
 			pl, err := t.cfg.GetPhishlet(s)
 			if err != nil {
@@ -931,11 +931,6 @@ func (t *Terminal) sprintLures() string {
 
 func (t *Terminal) phishletPrefixCompleter(args string) []string {
 	return t.cfg.GetPhishletNames()
-}
-
-func (t *Terminal) sprintVar(k string, v string) string {
-	vc := color.New(color.FgYellow)
-	return k + ": " + vc.Sprint(v)
 }
 
 func (t *Terminal) filterInput(r rune) (rune, bool) {

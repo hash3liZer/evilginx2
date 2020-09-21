@@ -85,22 +85,6 @@ func (d *Database) genIndex(table_name string, id int) string {
 	return table_name + ":" + strconv.Itoa(id)
 }
 
-func (d *Database) getLastId(table_name string) (int, error) {
-	var id int = 1
-	var err error
-	err = d.db.View(func(tx *buntdb.Tx) error {
-		var s_id string
-		if s_id, err = tx.Get(table_name + ":0:id"); err != nil {
-			return err
-		}
-		if id, err = strconv.Atoi(s_id); err != nil {
-			return err
-		}
-		return nil
-	})
-	return id, err
-}
-
 func (d *Database) getNextId(table_name string) (int, error) {
 	var id int = 1
 	var err error
