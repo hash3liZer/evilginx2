@@ -135,6 +135,7 @@ func TestStart(t *testing.T) {
 	// Check result
 	terminal.ProcessCommand("sessions 1")
 	test.assertLogContains("captured", "Session token captured")
+	test.assertLogContains(`","name":"reddit_session","httpOnly":true`, "Session cookie displayed")
 
 	//log.Println(buf.String())
 }

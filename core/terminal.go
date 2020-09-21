@@ -68,6 +68,7 @@ func (t *Terminal) output(s string, args ...interface{}) {
 
 func (t *Terminal) SetLogOutput(w io.Writer) {
 	log.SetOutput(w)
+	color.Output = w
 }
 
 func (t *Terminal) DoWork(background bool) {
