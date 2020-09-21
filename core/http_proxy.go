@@ -1075,7 +1075,10 @@ func (p *HttpProxy) deleteRequestCookie(name string, req *http.Request) {
 	if cookie := req.Header.Get("Cookie"); cookie != "" {
 		re := regexp.MustCompile(`(` + name + `=[^;]*;?\s*)`)
 		new_cookie := re.ReplaceAllString(cookie, "")
-		req.Header.Set("Cookie", new_cookie)
+		
+		if new_cookie != "" {
+			req.Header.Set("Cookie", new_cookie)
+		}
 	}
 }
 
