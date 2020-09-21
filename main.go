@@ -13,10 +13,14 @@ import (
 	"github.com/hash3liZer/evilginx2/log"
 )
 
-var phishlets_dir = flag.String("p", "", "Phishlets directory path")
-var debug_log = flag.Bool("debug", false, "Enable debug output")
-var developer_mode = flag.Bool("developer", false, "Enable developer mode (generates self-signed certificates for all hostnames)")
-var cfg_dir = flag.String("c", "", "Configuration directory path")
+
+var (
+	version = "dev"
+	phishlets_dir = flag.String("p", "", "Phishlets directory path")
+	debug_log = flag.Bool("debug", false, "Enable debug output")
+	developer_mode = flag.Bool("developer", false, "Enable developer mode (generates self-signed certificates for all hostnames)")
+	cfg_dir = flag.String("c", "", "Configuration directory path")
+)
 
 func joinPath(base_path string, rel_path string) string {
 	var ret string
@@ -37,7 +41,7 @@ func Start(run_background bool, phishlets_path string, debug bool, dev bool, con
 	exe_path, _ := os.Executable()
 	exe_dir := filepath.Dir(exe_path)
 
-	core.Banner()
+	core.Banner(version)
 	if phishlets_path == "" {
 		phishlets_path = joinPath(exe_dir, "./phishlets")
 		if _, err := os.Stat(phishlets_path); os.IsNotExist(err) {

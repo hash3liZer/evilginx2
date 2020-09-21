@@ -7,10 +7,6 @@ import (
 	"github.com/fatih/color"
 )
 
-const (
-	VERSION = "2.3.3"
-)
-
 func putAsciiArt(s string) {
 	for _, c := range s {
 		d := string(c)
@@ -54,7 +50,7 @@ func printLogo(s string) {
 	color.Unset()
 }
 
-func printOneliner1() {
+func printOneliner1(VERSION string) {
 	handleClr := color.New(color.FgHiBlue)
 	versionClr := color.New(color.FgGreen)
 	textClr := color.New(color.FgHiBlack)
@@ -71,7 +67,7 @@ func printOneliner2() {
 	fmt.Fprintf(color.Output, "%s", txt)
 }
 
-func Banner() {
+func Banner(VERSION string) {
 	fmt.Println()
 
 	putAsciiArt("__                                     __\n")
@@ -99,7 +95,7 @@ func Banner() {
 	fmt.Println()
 	putAsciiArt("    @@@@@@WW@@@WW@@WWW@@WW@@@WW@@@@@@    \n")
 	putAsciiArt("_   @@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@   _")
-	printOneliner1()
+	printOneliner1(VERSION)
 	fmt.Println()
 	putAsciiArt("__                                     __\n")
 	fmt.Println()
