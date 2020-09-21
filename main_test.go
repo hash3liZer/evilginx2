@@ -99,7 +99,8 @@ func TestStart(t *testing.T) {
 	test.Clear()
 
 	log.Println("Finished configuration, setting up HTTP")
-
+	time.Sleep(1 * time.Second)
+	
 	// Test HTTP requests
 	log.Println("Testing interaction")
 	_, url, _, _ := test.HttpGet("https://www.localhost")
