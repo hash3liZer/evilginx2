@@ -9,8 +9,7 @@ archives:
     - phishlets/*
 
 builds:
-  - 
-    id: "evilginx2"
+  - id: "evilginx2"
     goos:
     - windows
     - linux
