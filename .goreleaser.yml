@@ -9,16 +9,17 @@ archives:
     - phishlets/*
 
 builds:
-  - goos:
+  - 
+    goos:
     - windows
     - linux
     - darwin
-  - goarch:
+    goarch:
     - 386
     - amd64
     - arm
     - arm64
-  - ignore:
+    ignore:
     - goos: darwin
       goarch: 386
     - goos: darwin
@@ -27,3 +28,7 @@ builds:
       goarch: arm
     - goos: windows
       goarch: arm64
+    replacements:
+    darwin: Mac
+    386: x86
+    amd64: x64
