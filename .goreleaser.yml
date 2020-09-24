@@ -1,15 +1,16 @@
 archives:
-  - format_overrides:
+  - 
+    format_overrides:
     - goos: windows
       format: zip
-  - files:
+    files:
     - README.md
     - LICENSE
     - CHANGELOG
     - phishlets/*
 
 builds:
-  - id: "evilginx2"
+  - 
     goos:
     - windows
     - linux
