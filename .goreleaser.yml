@@ -1,5 +1,5 @@
 archives:
-  files:
+  - files:
     - README.md
     - LICENSE
     - CHANGELOG
