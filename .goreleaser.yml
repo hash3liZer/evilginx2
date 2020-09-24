@@ -10,6 +10,7 @@ archives:
 
 builds:
   - 
+    id: "evilginx2"
     goos:
     - windows
     - linux
