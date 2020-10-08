@@ -25,15 +25,6 @@ func intExists(i int, ia []int) bool {
 	return false
 }
 
-func removeString(s string, sa []string) []string {
-	for i, k := range sa {
-		if s == k {
-			return append(sa[:i], sa[i+1:]...)
-		}
-	}
-	return sa
-}
-
 func truncateString(s string, maxLen int) string {
 	if len(s) > maxLen {
 		ml := maxLen

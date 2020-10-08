@@ -107,7 +107,7 @@ func (h *Help) Print(layer int) {
 				if layer&h.cmd_layers[cmd] != 0 {
 					pcmd = lb.Sprint(cmd)
 				}
-				line_help, _ := h.line_help[cmd]
+				line_help := h.line_help[cmd]
 				rows = append(rows, pcmd)
 				vals = append(vals, line_help)
 			}
@@ -130,8 +130,7 @@ func (h *Help) PrintBrief(cmd string) error {
 			n_line := 0
 			var out_info []rune
 			out_info = append(out_info, ' ')
-			r_info := []rune(cmd_info)
-			for _, r := range r_info {
+			for _, r := range cmd_info {
 				if r == ' ' && n_line > max_line {
 					out_info = append(out_info, '\n')
 					n_line = 0

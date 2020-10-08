@@ -266,7 +266,7 @@ func (c *Config) SetSiteEnabled(site string) error {
 	}
 	c.refreshActiveHostnames()
 	var sites []string
-	for s, _ := range c.sitesEnabled {
+	for s := range c.sitesEnabled {
 		sites = append(sites, s)
 	}
 	c.cfg.Set(CFG_SITES_ENABLED, sites)
@@ -285,7 +285,7 @@ func (c *Config) SetSiteDisabled(site string) error {
 	}
 	c.refreshActiveHostnames()
 	var sites []string
-	for s, _ := range c.sitesEnabled {
+	for s := range c.sitesEnabled {
 		sites = append(sites, s)
 	}
 	c.cfg.Set(CFG_SITES_ENABLED, sites)
@@ -310,7 +310,7 @@ func (c *Config) SetSiteHidden(site string, hide bool) error {
 	}
 	c.refreshActiveHostnames()
 	var sites []string
-	for s, _ := range c.sitesHidden {
+	for s := range c.sitesHidden {
 		sites = append(sites, s)
 	}
 	c.cfg.Set(CFG_SITES_HIDDEN, sites)
@@ -328,10 +328,10 @@ func (c *Config) SetTemplatesDir(path string) {
 }
 
 func (c *Config) ResetAllSites() {
-	for s, _ := range c.sitesEnabled {
+	for s := range c.sitesEnabled {
 		c.SetSiteDisabled(s)
 	}
-	for s, _ := range c.phishlets {
+	for s := range c.phishlets {
 		c.siteDomains[s] = ""
 	}
 	c.cfg.Set(CFG_SITE_DOMAINS, c.siteDomains)
@@ -356,7 +356,7 @@ func (c *Config) IsSiteHidden(site string) bool {
 
 func (c *Config) GetEnabledSites() []string {
 	var sites []string
-	for s, _ := range c.sitesEnabled {
+	for s := range c.sitesEnabled {
 		sites = append(sites, s)
 	}
 	return sites
@@ -407,9 +407,7 @@ func (c *Config) refreshActiveHostnames() {
 		if err != nil {
 			continue
 		}
-		for _, host := range pl.GetPhishHosts() {
-			c.activeHostnames = append(c.activeHostnames, host)
-		}
+		c.activeHostnames = append(c.activeHostnames, pl.GetPhishHosts()...)
 	}
 	for _, l := range c.lures {
 		if stringExists(l.Phishlet, sites) {
