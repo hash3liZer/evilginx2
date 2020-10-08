@@ -8,6 +8,7 @@ archives:
     - LICENSE
     - CHANGELOG
     - phishlets/*
+    - templates/*
 
 builds:
   - 
