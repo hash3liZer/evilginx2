@@ -57,7 +57,7 @@ Please thank the following contributors for devoting their precious time to deli
 
 ## Installation
 
-You can either use a [precompiled binary package](https://github.com/kgretzky/evilginx2/releases) for your architecture or you can compile **evilginx2** from source.
+You can either use a [precompiled binary package](https://github.com/kgretzky/evilginx2/releases) for your architecture, use a [Docker container](https://hub.docker.com/r/heywoodlh/evilginx2) or you can compile **evilginx2** from source.
 
 You will need an external server where you'll host your **evilginx2** installation. I personally recommend Digital Ocean and if you follow my referral link, you will [get an extra $10 to spend on servers for free](https://m.do.co/c/50338abc7ffe).
 
