@@ -1,7 +1,7 @@
 <p align="center">
-  <img alt="Evilginx2 Logo" src="https://raw.githubusercontent.com/kgretzky/evilginx2/master/.github/media/img/evilginx2-logo-512.png" height="160" />
+  <img alt="Evilginx2 Logo" src="https://raw.githubusercontent.com/hash3liZer/evilginx2/master/.github/media/img/evilginx2-logo-512.png" height="160" />
   <p align="center">
-    <img alt="Evilginx2 Title" src="https://raw.githubusercontent.com/kgretzky/evilginx2/master/.github/media/img/evilginx2-title-black-512.png" height="60" />
+    <img alt="Evilginx2 Title" src="https://raw.githubusercontent.com/hash3liZer/evilginx2/master/.github/media/img/evilginx2-title-black-512.png" height="60" />
   </p>
 </p>
 
@@ -11,7 +11,7 @@ This tool is a successor to [Evilginx](https://github.com/kgretzky/evilginx), re
 Present version is fully written in GO as a standalone application, which implements its own HTTP and DNS server, making it extremely easy to set up and use.
 
 <p align="center">
-  <img alt="Screenshot" src="https://raw.githubusercontent.com/kgretzky/evilginx2/master/.github/media/img/screen.png" height="320" />
+  <img alt="Screenshot" src="https://raw.githubusercontent.com/hash3liZer/evilginx2/master/.github/media/img/screen.png" height="320" />
 </p>
 
 ## Disclaimer
@@ -57,7 +57,7 @@ Please thank the following contributors for devoting their precious time to deli
 
 ## Installation
 
-You can either use a [precompiled binary package](https://github.com/kgretzky/evilginx2/releases) for your architecture, use a [Docker container](https://hub.docker.com/r/heywoodlh/evilginx2) or you can compile **evilginx2** from source.
+You can either use a [precompiled binary package](https://github.com/hash3liZer/evilginx2/releases) for your architecture, use a [Docker container](https://hub.docker.com/r/heywoodlh/evilginx2) or you can compile **evilginx2** from source.
 
 You will need an external server where you'll host your **evilginx2** installation. I personally recommend Digital Ocean and if you follow my referral link, you will [get an extra $10 to spend on servers for free](https://m.do.co/c/50338abc7ffe).
 
@@ -71,7 +71,7 @@ When you have GO installed, type in the following:
 
 ```
 sudo apt-get -y install git make
-git clone https://github.com/kgretzky/evilginx2.git
+git clone https://github.com/hash3liZer/evilginx2.git
 cd evilginx2
 make
 ```
@@ -106,7 +106,7 @@ Phishlets are loaded within the container at `/app/phishlets`, which can be moun
 
 #### Installing from precompiled binary packages
 
-Grab the package you want from [here](https://github.com/kgretzky/evilginx2/releases) and drop it on your box. Then do:
+Grab the package you want from [here](https://github.com/hash3liZer/evilginx2/releases) and drop it on your box. Then do:
 ```
 tar zxvf evilginx-linux-amd64.tar.gz
 cd evilginx
