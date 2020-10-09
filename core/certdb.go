@@ -394,7 +394,9 @@ func (d *CertDb) registerCertificate(domains []string) (*certificate.Resource, e
 func (d *CertDb) getServerCertificate(host string, port int) *x509.Certificate {
 	log.Debug("Fetching TLS certificate from %s:%d ...", host, port)
 
-	config := tls.Config{InsecureSkipVerify: true}
+	config := tls.Config{
+		InsecureSkipVerify: (os.Getenv("VALIDATETLS") != "YES"),
+	}
 	conn, err := tls.Dial("tcp", fmt.Sprintf("%s:%d", host, port), &config)
 	if err != nil {
 		log.Warning("Could not fetch TLS certificate from %s:%d: %s", host, port, err)

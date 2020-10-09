@@ -136,6 +136,18 @@ func TestStart(t *testing.T) {
 	terminal.ProcessCommand("sessions 1")
 	test.assertLogContains("captured", "Session token captured")
 	test.assertLogContains(`","name":"reddit_session","httpOnly":true`, "Session cookie displayed")
+	test.Clear()
+	
+	exportPath := path+"/export.json"
+	os.RemoveAll(exportPath)
+	terminal.ProcessCommand("sessions export json "+strings.ReplaceAll(exportPath, `\`, `\\`))
+	test.assertLogContains("exported sessions to json", "Can export sessions to file")
+	time.Sleep(1 * time.Second)
+	readDump, err := ioutil.ReadFile(exportPath)
+	test.outputResult(
+		(err == nil && strings.Contains(string(readDump), `"id":"1"`)),
+		"Dumped sessions are valid",
+	)
 
 	//log.Println(buf.String())
 }

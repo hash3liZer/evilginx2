@@ -1,3 +1,4 @@
 phishlets/test-*
 /*.exe
 /tmp_cfg
+/export.json

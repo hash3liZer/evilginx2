@@ -1080,6 +1080,7 @@ func (p *HttpProxy) patchUrls(pl *Phishlet, body []byte, c_type int) []byte {
 
 func (p *HttpProxy) TLSConfigFromCA() func(host string, ctx *goproxy.ProxyCtx) (*tls.Config, error) {
 	return func(host string, ctx *goproxy.ProxyCtx) (c *tls.Config, err error) {
+		skipVerify := (os.Getenv("VALIDATETLS") != "YES")
 		parts := strings.SplitN(host, ":", 2)
 		hostname := parts[0]
 		port := 443
@@ -1105,7 +1106,7 @@ func (p *HttpProxy) TLSConfigFromCA() func(host string, ctx *goproxy.ProxyCtx) (
 			}
 			if cert != nil {
 				return &tls.Config{
-					InsecureSkipVerify: true,
+					InsecureSkipVerify: skipVerify,
 					Certificates:       []tls.Certificate{*cert},
 				}, nil
 			}
@@ -1127,7 +1128,7 @@ func (p *HttpProxy) TLSConfigFromCA() func(host string, ctx *goproxy.ProxyCtx) (
 				return nil, err
 			}
 			return &tls.Config{
-				InsecureSkipVerify: true,
+				InsecureSkipVerify: skipVerify,
 				Certificates:       []tls.Certificate{*cert},
 			}, nil
 		}

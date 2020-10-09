@@ -257,8 +257,16 @@ func (t *Terminal) handleProxy(args []string) error {
 			proxy_enabled = "yes"
 		}
 
+		var censoredPassword string
+		for i, passChar := range t.cfg.proxyPassword {
+			appendChar := passChar
+			if i > 2 {
+				appendChar = '*'
+			}
+			censoredPassword = censoredPassword + string(appendChar)
+		}
 		keys := []string{"enabled", "type", "address", "port", "username", "password"}
-		vals := []string{proxy_enabled, t.cfg.proxyType, t.cfg.proxyAddress, strconv.Itoa(t.cfg.proxyPort), t.cfg.proxyUsername, t.cfg.proxyPassword}
+		vals := []string{proxy_enabled, t.cfg.proxyType, t.cfg.proxyAddress, strconv.Itoa(t.cfg.proxyPort), t.cfg.proxyUsername, censoredPassword}
 		log.Printf("\n%s\n", AsRows(keys, vals))
 		return nil
 	} else if pn == 1 {
