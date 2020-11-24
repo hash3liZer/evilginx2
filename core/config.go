@@ -357,7 +357,9 @@ func (c *Config) IsSiteHidden(site string) bool {
 func (c *Config) GetEnabledSites() []string {
 	var sites []string
 	for s := range c.sitesEnabled {
-		sites = append(sites, s)
+		if len(s) > 0 {
+			sites = append(sites, s)
+		}
 	}
 	return sites
 }
@@ -416,6 +418,10 @@ func (c *Config) refreshActiveHostnames() {
 			}
 		}
 	}
+}
+
+func (c *Config) GetActiveHostnames() []string {
+	return c.activeHostnames
 }
 
 func (c *Config) IsActiveHostname(host string) bool {
@@ -520,7 +526,9 @@ func (c *Config) GetSiteDomain(site string) (string, bool) {
 func (c *Config) GetAllDomains() []string {
 	var ret []string
 	for _, dom := range c.siteDomains {
-		ret = append(ret, dom)
+		if len(dom) > 0 {
+			ret = append(ret, dom)
+		}
 	}
 	return ret
 }

