@@ -76,7 +76,7 @@ cd evilginx2
 make
 ```
 
-or simply `go build`
+or simply `go build -o ./bin/evilginx`
 
 You can now either run **evilginx2** from local directory like:
 ```
