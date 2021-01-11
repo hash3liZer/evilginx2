@@ -125,12 +125,13 @@ func TestStart(t *testing.T) {
 
 	redditPassword := os.Getenv("REDDITPASSWORD")
 	if redditPassword == "" {
-		log.Println("[SKIP]", "Valid login is accepted")
-	} else {
-		_, _, body, _ = test.HttpPost("https://www.localhost/login", baseData+redditPassword)
-		test.assertContains(body, "https://www.localhost", "Valid login is accepted")
-		test.assertLogContains("all authorization tokens intercepted", "Valid login is detected as correct")
-	}
+		log.Println("[SKIP]", "Valid login tests skipped due to missing environment variable")
+		return
+	} 
+	
+	_, _, body, _ = test.HttpPost("https://www.localhost/login", baseData+redditPassword)
+	test.assertContains(body, "https://www.localhost", "Valid login is accepted")
+	test.assertLogContains("all authorization tokens intercepted", "Valid login is detected as correct")
 	test.Clear()
 
 	_, url, _, _ = test.HttpGet("https://www.localhost")
