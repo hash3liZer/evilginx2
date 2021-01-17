@@ -275,6 +275,10 @@ func (t *Terminal) handleBlacklist(args []string) error {
 				return nil
 			}
 			return nil
+		case "exists":
+			exists := t.p.bl.IsBlacklisted(args[0])
+			log.Success("%v", exists)
+			return nil
 		}
 	}
 	return fmt.Errorf("invalid syntax: %s", args)
