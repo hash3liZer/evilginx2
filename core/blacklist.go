@@ -118,3 +118,27 @@ func (bl *Blacklist) IsBlacklisted(ip string) bool {
 	}
 	return false
 }
+
+func (bl *Blacklist) IPs() (ips []string, err error) {
+	f, err := os.Open(bl.configPath)
+	if err != nil {
+		return nil, err
+	}
+
+	defer func() {
+		if err != nil {
+			f.Close()
+		}
+	}()
+
+	s := bufio.NewScanner(f)
+	for s.Scan() {
+		ips = append(ips, s.Text())
+	}
+
+	if err := s.Err(); err != nil {
+		return nil, fmt.Errorf("IPs: error reading blacklist: %w", err)
+	}
+
+	return
+}
