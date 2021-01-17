@@ -1142,7 +1142,7 @@ func (t *Terminal) createHelp() {
 	h.AddSubCommand("blacklist", []string{"unauth"}, "unauth", "block and blacklist ip addresses only for unauthorized requests")
 	h.AddSubCommand("blacklist", []string{"off"}, "off", "never add any ip addresses to blacklist")
 	h.AddSubCommand("blacklist", []string{"show"}, "show", "list all blacklisted ip addresses")
-	h.AddSubCommand("blacklist", []string{"add"}, "add", "add one or more ips to blacklist")
+	h.AddSubCommand("blacklist", []string{"add"}, "add <ip> <ip> ...", "add one or more ips to blacklist")
 
 	h.AddCommand("clear", "general", "clears the screen", "Clears the screen.", LAYER_TOP,
 		readline.PcItem("clear"))
