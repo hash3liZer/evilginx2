@@ -31,6 +31,15 @@ const (
 	LAYER_TOP      = 1
 )
 
+var (
+	lblue  = color.New(color.FgHiBlue)
+	dgray  = color.New(color.FgHiBlack)
+	lgreen = color.New(color.FgHiGreen)
+	yellow = color.New(color.FgYellow)
+	lred   = color.New(color.FgHiRed)
+	cyan   = color.New(color.FgCyan)
+)
+
 type Terminal struct {
 	rl        *readline.Instance
 	completer *readline.PrefixCompleter
@@ -329,12 +338,6 @@ func (t *Terminal) handleProxy(args []string) error {
 }
 
 func (t *Terminal) handleSessions(args []string) error {
-	lblue := color.New(color.FgHiBlue)
-	dgray := color.New(color.FgHiBlack)
-	lgreen := color.New(color.FgHiGreen)
-	yellow := color.New(color.FgYellow)
-	lred := color.New(color.FgHiRed)
-	cyan := color.New(color.FgCyan)
 
 	pn := len(args)
 	if pn == 0 {
