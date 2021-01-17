@@ -107,6 +107,7 @@ func (bl *Blacklist) AddIP(ips ...string) error {
 func (bl *Blacklist) IsBlacklisted(ip string) bool {
 	ipv4 := net.ParseIP(ip)
 	if ipv4 == nil {
+		log.Error("not a valid ip '%s'", ip)
 		return false
 	}
 
