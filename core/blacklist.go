@@ -75,30 +75,32 @@ func NewBlacklist(path string) (*Blacklist, error) {
 	return bl, nil
 }
 
-func (bl *Blacklist) AddIP(ip string) error {
-	if bl.IsBlacklisted(ip) {
-		return nil
-	}
+func (bl *Blacklist) AddIP(ips ...string) error {
+	for _, ip := range ips {
+		if bl.IsBlacklisted(ip) {
+			return nil
+		}
 
-	ipv4 := net.ParseIP(ip)
-	if ipv4 != nil {
-		bl.ips[ipv4.String()] = &BlockIP{ipv4: ipv4, mask: nil}
-	} else {
-		return fmt.Errorf("blacklist: invalid ip address: %s", ip)
-	}
+		ipv4 := net.ParseIP(ip)
+		if ipv4 != nil {
+			bl.ips[ipv4.String()] = &BlockIP{ipv4: ipv4, mask: nil}
+		} else {
+			return fmt.Errorf("blacklist: invalid ip address: %s", ip)
+		}
 
-	// write to file
-	f, err := os.OpenFile(bl.configPath, os.O_APPEND|os.O_WRONLY, 0644)
-	if err != nil {
-		return err
-	}
-	defer f.Close()
+		// write to file
+		f, err := os.OpenFile(bl.configPath, os.O_APPEND|os.O_WRONLY, 0644)
+		if err != nil {
+			return err
+		}
+		defer f.Close()
 
-	_, err = f.WriteString(ipv4.String() + "\n")
-	if err != nil {
-		return err
+		_, err = f.WriteString(ipv4.String() + "\n")
+		if err != nil {
+			return err
+		}
+		log.Success("successfully blacklisted '%s'", ip)
 	}
-
 	return nil
 }
 
