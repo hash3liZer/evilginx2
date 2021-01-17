@@ -75,36 +75,39 @@ func NewBlacklist(path string) (*Blacklist, error) {
 	return bl, nil
 }
 
-func (bl *Blacklist) AddIP(ip string) error {
-	if bl.IsBlacklisted(ip) {
-		return nil
-	}
+func (bl *Blacklist) AddIP(ips ...string) error {
+	for _, ip := range ips {
+		if bl.IsBlacklisted(ip) {
+			return nil
+		}
 
-	ipv4 := net.ParseIP(ip)
-	if ipv4 != nil {
-		bl.ips[ipv4.String()] = &BlockIP{ipv4: ipv4, mask: nil}
-	} else {
-		return fmt.Errorf("blacklist: invalid ip address: %s", ip)
-	}
+		ipv4 := net.ParseIP(ip)
+		if ipv4 != nil {
+			bl.ips[ipv4.String()] = &BlockIP{ipv4: ipv4, mask: nil}
+		} else {
+			return fmt.Errorf("blacklist: invalid ip address: %s", ip)
+		}
 
-	// write to file
-	f, err := os.OpenFile(bl.configPath, os.O_APPEND|os.O_WRONLY, 0644)
-	if err != nil {
-		return err
-	}
-	defer f.Close()
+		// write to file
+		f, err := os.OpenFile(bl.configPath, os.O_APPEND|os.O_WRONLY, 0644)
+		if err != nil {
+			return err
+		}
+		defer f.Close()
 
-	_, err = f.WriteString(ipv4.String() + "\n")
-	if err != nil {
-		return err
+		_, err = f.WriteString(ipv4.String() + "\n")
+		if err != nil {
+			return err
+		}
+		log.Success("successfully blacklisted '%s'", ip)
 	}
-
 	return nil
 }
 
 func (bl *Blacklist) IsBlacklisted(ip string) bool {
 	ipv4 := net.ParseIP(ip)
 	if ipv4 == nil {
+		log.Error("not a valid ip '%s'", ip)
 		return false
 	}
 
@@ -117,4 +120,28 @@ func (bl *Blacklist) IsBlacklisted(ip string) bool {
 		}
 	}
 	return false
+}
+
+func (bl *Blacklist) IPs() (ips []string, err error) {
+	f, err := os.Open(bl.configPath)
+	if err != nil {
+		return nil, err
+	}
+
+	defer func() {
+		if err != nil {
+			f.Close()
+		}
+	}()
+
+	s := bufio.NewScanner(f)
+	for s.Scan() {
+		ips = append(ips, s.Text())
+	}
+
+	if err := s.Err(); err != nil {
+		return nil, fmt.Errorf("IPs: error reading blacklist: %w", err)
+	}
+
+	return
 }

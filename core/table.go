@@ -144,6 +144,48 @@ func AsTable(columns []string, rows [][]string) string {
 	return table
 }
 
+//AsSingleColTable creates a single column ascii table.
+// col is the header of the table and cells are the individual rows under the header col
+func AsSingleColTable(col string, cells []string) string {
+	dg := color.New(color.FgHiBlack)
+
+	rMaxLens := make([]int, 0)
+
+	for _, cell := range cells {
+		rlen := viewLen(fmt.Sprintf(" %s ", cell)) + 4
+		if rlen < minColLen {
+			rlen = minColLen
+		}
+		rMaxLens = append(rMaxLens, rlen)
+	}
+
+	//lets find the longest column and set that to be the maxwidthlen
+	var MaxLen int
+	for _, len := range rMaxLens {
+		if len > MaxLen {
+			MaxLen = len
+		}
+	}
+
+	var lineSep string
+
+	lineSep += fmt.Sprintf("+%s", strings.Repeat("-", MaxLen+1))
+	lineSep += "+"
+
+	var table string
+	table += dg.Sprintf("%s\n", lineSep)
+	table += dg.Sprintf("|") + padded(col, MaxLen, AlignCenter)
+	table += dg.Sprintf("|\n")
+	table += dg.Sprintf("%s\n", lineSep)
+	for _, cell := range cells {
+		table += dg.Sprintf("|") + padded(cell, MaxLen, AlignCenter)
+		table += dg.Sprintf("|\n")
+	}
+
+	table += dg.Sprintf(lineSep) + "\n"
+	return table
+}
+
 func AsRows(keys []string, vals []string) string {
 	clr := color.New(color.FgHiBlack)
 	mLen := maxLen(keys)
