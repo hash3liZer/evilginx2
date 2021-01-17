@@ -276,7 +276,7 @@ func (t *Terminal) handleBlacklist(args []string) error {
 			}
 			return nil
 		case "exists":
-			exists := t.p.bl.IsBlacklisted(args[0])
+			exists := t.p.bl.IsBlacklisted(args[1])
 			log.Success("%v", exists)
 			return nil
 		}
