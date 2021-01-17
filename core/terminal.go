@@ -266,7 +266,7 @@ func (t *Terminal) handleBlacklist(args []string) error {
 			}
 			return nil
 		}
-	} else if pn > 2 {
+	} else if pn >= 2 {
 		switch args[0] {
 		case "add":
 			err := t.p.bl.AddIP(args[1:]...)
