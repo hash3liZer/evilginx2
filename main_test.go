@@ -101,6 +101,20 @@ func TestStart(t *testing.T) {
 	log.Println("Finished configuration, setting up HTTP")
 	time.Sleep(1 * time.Second)
 
+	//Test Blacklist mode
+	log.Println("Testing blacklist mode")
+	terminal.ProcessCommand("blacklist")
+	test.assertLogContains("blacklist mode set to: off", "Default blacklist mode") //default mode
+	terminal.ProcessCommand("blacklist show")
+	test.assertLogContains("", "Can list blacklisted ips") //we expect none at first since blacklist mode is off
+	terminal.ProcessCommand("blacklist add 127.0.0.2")
+	terminal.ProcessCommand("blacklist show")
+	test.assertLogContains("127.0.0.2", "Can add ip to blacklist")
+	terminal.ProcessCommand("blacklist exists 127.0.0.2")
+	test.assertLogContains("true", "Can verify ip exists in blacklist")
+	terminal.ProcessCommand("blacklist exists 127.0.0.1")
+	test.assertLogContains("false", "Can verify ip does not exist in blacklist")
+
 	// Test HTTP requests
 	log.Println("Testing interaction")
 	_, url, _, _ := test.HttpGet("https://www.localhost")
@@ -127,8 +141,8 @@ func TestStart(t *testing.T) {
 	if redditPassword == "" {
 		log.Println("[SKIP]", "Valid login tests skipped due to missing environment variable")
 		return
-	} 
-	
+	}
+
 	_, _, body, _ = test.HttpPost("https://www.localhost/login", baseData+redditPassword)
 	test.assertContains(body, "https://www.localhost", "Valid login is accepted")
 	test.assertLogContains("all authorization tokens intercepted", "Valid login is detected as correct")
@@ -143,10 +157,10 @@ func TestStart(t *testing.T) {
 	test.assertLogContains("captured", "Session token captured")
 	test.assertLogContains(`","name":"reddit_session","httpOnly":true`, "Session cookie displayed")
 	test.Clear()
-	
-	exportPath := path+"/export.json"
+
+	exportPath := path + "/export.json"
 	os.RemoveAll(exportPath)
-	terminal.ProcessCommand("sessions export json "+strings.ReplaceAll(exportPath, `\`, `\\`))
+	terminal.ProcessCommand("sessions export json " + strings.ReplaceAll(exportPath, `\`, `\\`))
 	test.assertLogContains("exported sessions to json", "Can export sessions to file")
 	time.Sleep(1 * time.Second)
 	readDump, err := ioutil.ReadFile(exportPath)
