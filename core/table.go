@@ -168,8 +168,6 @@ func AsSingleColTable(col string, cells []string) string {
 	}
 
 	var lineSep string
-	column := []string{col}
-	column = append(column, cells...)
 
 	lineSep += fmt.Sprintf("+%s", strings.Repeat("-", MaxLen+1))
 	lineSep += "+"
