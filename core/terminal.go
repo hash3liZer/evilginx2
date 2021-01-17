@@ -266,6 +266,16 @@ func (t *Terminal) handleBlacklist(args []string) error {
 			}
 			return nil
 		}
+	} else if pn > 2 {
+		switch args[0] {
+		case "add":
+			err := t.p.bl.AddIP(args[1:]...)
+			if err != nil {
+				log.Error("%v", err)
+				return nil
+			}
+			return nil
+		}
 	}
 	return fmt.Errorf("invalid syntax: %s", args)
 }
@@ -1132,6 +1142,7 @@ func (t *Terminal) createHelp() {
 	h.AddSubCommand("blacklist", []string{"unauth"}, "unauth", "block and blacklist ip addresses only for unauthorized requests")
 	h.AddSubCommand("blacklist", []string{"off"}, "off", "never add any ip addresses to blacklist")
 	h.AddSubCommand("blacklist", []string{"show"}, "show", "list all blacklisted ip addresses")
+	h.AddSubCommand("blacklist", []string{"add"}, "add", "add one or more ips to blacklist")
 
 	h.AddCommand("clear", "general", "clears the screen", "Clears the screen.", LAYER_TOP,
 		readline.PcItem("clear"))
